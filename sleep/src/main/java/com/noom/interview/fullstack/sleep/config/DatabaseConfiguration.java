@@ -1,18 +1,17 @@
-package com.noom.interview.fullstack.sleep.db;
+package com.noom.interview.fullstack.sleep.config;
 
+import java.sql.Connection;
 import java.sql.SQLException;
+import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import java.sql.Connection;
-import javax.sql.DataSource;
-
 
 @Configuration
-@Profile("unit-test")
+@Profile("!unit-test")
 public class DatabaseConfiguration {
 
     @Value("${spring.datasource.url}")
@@ -24,10 +23,13 @@ public class DatabaseConfiguration {
     @Value("${spring.datasource.password}")
     private String password;
 
+    @Value("${spring.datasource.driver-class-name}")
+    private String driverClassName;
+
     @Bean
     public DataSource dataSource() {
         return DataSourceBuilder.create()
-                .driverClassName("org.postgresql.Driver")
+                .driverClassName(driverClassName)
                 .url(url)
                 .username(username)
                 .password(password)
