@@ -10,11 +10,11 @@ CREATE TYPE FEELING AS ENUM ('GOOD', 'OK', 'BAD');
 CREATE TABLE USER_SLEEP
 (
     ID              SERIAL PRIMARY KEY,
-    CREATED_TMS     timestamp,
-    FALL_ASLEEP_TMS timestamp,
-    WAKE_UP_TMS     timestamp,
-    FEELING         FEELING,
-    USER_ID         integer references USERS
+    CREATED_TMS     timestamp NOT NULL,
+    FALL_ASLEEP_TMS timestamp NOT NULL,
+    WAKE_UP_TMS     timestamp NOT NULL,
+    FEELING         FEELING NOT NULL,
+    USER_ID         integer NOT NULL REFERENCES USERS
 );
 
 CREATE INDEX USER_SLEEP_IDX ON USER_SLEEP (USER_ID);
