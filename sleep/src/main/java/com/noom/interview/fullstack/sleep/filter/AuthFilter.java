@@ -29,7 +29,7 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if (authHeader != null) {
+        if (authHeader != null && !authHeader.isBlank()) {
             try {
                 int userId = Integer.parseInt(new String(Base64.getDecoder().decode(authHeader), StandardCharsets.UTF_8));
                 LOGGER.info("User id {} invokes method {} {}", userId, request.getMethod(), request.getRequestURI());

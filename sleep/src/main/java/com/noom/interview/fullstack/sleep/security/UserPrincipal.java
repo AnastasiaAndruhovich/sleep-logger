@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public final class UserPrincipal {
-    private final Integer userId;
+    private final int userId;
 
     private final String name;
 
