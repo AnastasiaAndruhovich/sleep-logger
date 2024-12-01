@@ -4,13 +4,16 @@ import com.noom.interview.fullstack.sleep.constant.Feeling;
 import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Objects;
 import javax.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
 @Entity
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user_sleep")
 @SqlResultSetMapping(
         name = "averageUserSleepMapping",
@@ -44,7 +47,7 @@ import lombok.NoArgsConstructor;
 public class UserSleep {
 
     @Id
-    @Column(name = "id", columnDefinition = "serial")
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -66,4 +69,29 @@ public class UserSleep {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserSleep userSleep = (UserSleep) o;
+        return sleepingTimeInMinutes == userSleep.sleepingTimeInMinutes && Objects.equals(id, userSleep.id) && Objects.equals(createdDate, userSleep.createdDate) && Objects.equals(fallAsleepTime, userSleep.fallAsleepTime) && Objects.equals(wakeUpTime, userSleep.wakeUpTime) && feeling == userSleep.feeling;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, createdDate, fallAsleepTime, wakeUpTime, sleepingTimeInMinutes, feeling);
+    }
+
+    @Override
+    public String toString() {
+        return "UserSleep{" +
+                "id=" + id +
+                ", createdDate=" + createdDate +
+                ", fallAsleepTime=" + fallAsleepTime +
+                ", wakeUpTime=" + wakeUpTime +
+                ", sleepingTimeInMinutes=" + sleepingTimeInMinutes +
+                ", feeling=" + feeling +
+                '}';
+    }
 }
