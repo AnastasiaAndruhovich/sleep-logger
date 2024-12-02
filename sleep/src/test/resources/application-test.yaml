@@ -10,4 +10,4 @@ spring:
     enabled: false
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none

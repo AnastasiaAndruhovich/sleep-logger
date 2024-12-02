@@ -3,16 +3,21 @@ package com.noom.interview.fullstack.sleep.repository;
 import com.noom.interview.fullstack.sleep.entity.User;
 import com.noom.interview.fullstack.sleep.entity.UserSleep;
 import com.noom.interview.fullstack.sleep.generator.UserGenerator;
+import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
 import java.sql.Date;
+import java.sql.Time;
 import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -83,11 +88,18 @@ public class UserSleepRepositoryTest {
         assertTrue(actualUserSleepOpt.isEmpty());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("provideArgumentsForUserAverageSleep")
     @DisplayName("")
-    @Sql(value = {"/db/init_users.sql", "/db/init_user_sleep.sql"})
-    void shouldCalculateUserAverageSleepWithinPeriod() {
+    void shouldCalculateUserAverageSleepWithinPeriod(long userId, Date startDate, Date endDate, AverageUserSleep expectedAverageUSerSleep) {
+        /*AverageUserSleep actualAverageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, startDate, endDate);
 
+        assertEquals(expectedAverageUSerSleep, actualAverageUserSleep);*/
+    }
+
+    private static Stream<Arguments> provideArgumentsForUserAverageSleep() {
+        return Stream.of(Arguments.of((long) 1, Date.valueOf("2024-11-01"), Date.valueOf("2024-11-30"),
+                AverageUserSleep.builder().avgSleepingTimeInMinutes(363).avgFallAsleepTime(Time.valueOf("22:13:45")).avgWakeTimeTime(Time.valueOf("06:20:00")).goodCount(2).okCount(0).badCount(2).build()));
     }
 
 }

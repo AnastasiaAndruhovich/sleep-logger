@@ -41,7 +41,7 @@ import lombok.*;
                 "       COUNT(CASE WHEN feeling = 'OK' THEN 1 END)   AS ok_count,\n" +
                 "       COUNT(CASE WHEN feeling = 'BAD' THEN 1 END)  AS bad_count\n" +
                 "FROM user_sleep\n" +
-                "WHERE user_id = :user_id\n" +
+                "WHERE user_id = :userId\n" +
                 "  AND created_date BETWEEN :startDate AND :endDate",
         resultSetMapping = "averageUserSleepMapping")
 public class UserSleep {
