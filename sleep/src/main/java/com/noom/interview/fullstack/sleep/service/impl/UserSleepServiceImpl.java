@@ -57,6 +57,13 @@ public class UserSleepServiceImpl implements UserSleepService {
         LocalDate startDate = endDate.minusMonths(1);
 
         AverageUserSleep averageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, Date.valueOf(startDate), Date.valueOf(endDate));
-        return averageUserSleep.getAvgSleepingTimeInMinutes() == null ? null : userSleepMapper.mapAverageUserSleepToAverageSleepDto(averageUserSleep);
+        if (averageUserSleep.getAvgSleepingTimeInMinutes() == null) {
+            return null;
+        }
+        AverageSleepDto averageSleepDto = userSleepMapper.mapAverageUserSleepToAverageSleepDto(averageUserSleep);
+        averageSleepDto.setStartDate(startDate);
+        averageSleepDto.setEndDate(endDate);
+
+        return averageSleepDto;
     }
 }
