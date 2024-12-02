@@ -3,6 +3,9 @@ spring:
     timezone: UTC
   datasource:
     url: jdbc:h2:mem:testdb
+    username: user
+    password: password
+    driver-class-name: org.h2.Driver
   flyway:
     enabled: false
   jpa:
