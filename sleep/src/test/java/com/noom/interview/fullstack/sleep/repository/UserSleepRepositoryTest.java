@@ -88,18 +88,18 @@ public class UserSleepRepositoryTest {
         assertTrue(actualUserSleepOpt.isEmpty());
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("provideArgumentsForUserAverageSleep")
     @DisplayName("")
     void shouldCalculateUserAverageSleepWithinPeriod(long userId, Date startDate, Date endDate, AverageUserSleep expectedAverageUSerSleep) {
-        /*AverageUserSleep actualAverageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, startDate, endDate);
+        *//*AverageUserSleep actualAverageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, startDate, endDate);
 
-        assertEquals(expectedAverageUSerSleep, actualAverageUserSleep);*/
+        assertEquals(expectedAverageUSerSleep, actualAverageUserSleep);*//*
     }
 
     private static Stream<Arguments> provideArgumentsForUserAverageSleep() {
         return Stream.of(Arguments.of((long) 1, Date.valueOf("2024-11-01"), Date.valueOf("2024-11-30"),
                 AverageUserSleep.builder().avgSleepingTimeInMinutes(363).avgFallAsleepTime(Time.valueOf("22:13:45")).avgWakeTimeTime(Time.valueOf("06:20:00")).goodCount(2).okCount(0).badCount(2).build()));
-    }
+    }*/
 
 }

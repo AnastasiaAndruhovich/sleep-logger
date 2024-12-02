@@ -8,7 +8,10 @@ import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Map;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         imports = {Date.class, Time.class})
@@ -30,9 +33,7 @@ public interface UserSleepMapper {
 
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "endDate", ignore = true)
-    @Mapping(target = "avgTimeInBedInMinutes", source = "avgSleepingTimeInMinutes", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
-    @Mapping(target = "avgFallAsleepTime", expression = "java(averageUserSleep.getAvgFallAsleepTime() == null ? null : averageUserSleep.getAvgFallAsleepTime().toLocalTime())")
-    @Mapping(target = "avgWakeUpTime", expression = "java(averageUserSleep.getAvgWakeTimeTime() == null ? null : averageUserSleep.getAvgWakeTimeTime().toLocalTime())")
+    @Mapping(target = "avgTimeInBedInMinutes", source = "avgSleepingTimeInMinutes")
     @Mapping(target = "feelingStatistic", source = ".", qualifiedByName = "mapFeelingStatistic")
     AverageSleepDto mapAverageUserSleepToAverageSleepDto(AverageUserSleep averageUserSleep);
 
