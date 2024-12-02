@@ -1,10 +1,9 @@
 package com.noom.interview.fullstack.sleep.repository;
 
-import com.noom.interview.fullstack.sleep.constant.Feeling;
 import com.noom.interview.fullstack.sleep.entity.User;
 import com.noom.interview.fullstack.sleep.entity.UserSleep;
+import com.noom.interview.fullstack.sleep.generator.UserGenerator;
 import java.sql.Date;
-import java.sql.Time;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,22 +23,11 @@ public class UserSleepRepositoryTest {
     @Autowired
     private UserSleepRepository userSleepRepository;
 
-    private final User sampledUser = User.builder()
-            .name("Harry Potter")
-            .email("harry.potter@test.com").build();
-
-    private final UserSleep sampledUserSleep = UserSleep.builder()
-            .createdDate(Date.valueOf("2024-11-01"))
-            .fallAsleepTime(Time.valueOf("22:30:00"))
-            .wakeUpTime(Time.valueOf("06:30:00"))
-            .sleepingTimeInMinutes(323)
-            .feeling(Feeling.GOOD)
-            .build();
-
     @Test
     @DisplayName("Should save UserSleep entity and verify all fields are persisted correctly")
     void shouldSave() {
-        User expectedUser = userRepository.save(sampledUser);
+        User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
 
         UserSleep actualUserSleep = userSleepRepository.save(sampledUserSleep);
@@ -56,7 +44,8 @@ public class UserSleepRepositoryTest {
     @Test
     @DisplayName("Should find UserSleep entity by userId and createdDate")
     void shouldFindByUserIdAndCreatedDate() {
-        User expectedUser = userRepository.save(sampledUser);
+        User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
         UserSleep expectedUserSleep = userSleepRepository.save(sampledUserSleep);
 
@@ -69,7 +58,8 @@ public class UserSleepRepositoryTest {
     @Test
     @DisplayName("Should return empty when no UserSleep is found for userId")
     void shouldFindByUserIdAndCreatedDate_whenNotFoundByUserId_returnsEmptyObject() {
-        User expectedUser = userRepository.save(sampledUser);
+        User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
         UserSleep expectedUserSleep = userSleepRepository.save(sampledUserSleep);
 
@@ -81,7 +71,8 @@ public class UserSleepRepositoryTest {
     @Test
     @DisplayName("Should return empty when no UserSleep is found for createdDate")
     void shouldFindByUserIdAndCreatedDate_whenNotFoundByUserCreatedDate_returnsEmptyObject() {
-        User expectedUser = userRepository.save(sampledUser);
+        User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
         UserSleep expectedUserSleep = userSleepRepository.save(sampledUserSleep);
 
