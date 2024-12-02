@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AverageUserSleep {
 
-    private long avgSleepingTimeInMinutes;
+    private Integer avgSleepingTimeInMinutes;
 
     private Time avgFallAsleepTime;
 
