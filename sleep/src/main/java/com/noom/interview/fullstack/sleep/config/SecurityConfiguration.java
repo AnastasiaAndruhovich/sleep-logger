@@ -13,7 +13,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-    public static final String[] ALL_WHITE_LIST = {};
+    public static final String[] ALL_WHITE_LIST = {"/health"};
 
     private final AuthFilter authFilter;
 
