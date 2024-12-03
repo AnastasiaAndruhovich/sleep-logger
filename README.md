@@ -41,6 +41,7 @@ The Sleep Logger API supports the following functionality:
 Ensure the following are installed on your system:
 - **Docker**: For containerized setup.
 - **Postman** (or any API testing tool): To test endpoints. It's optional. You can use swagger instead.
+    Postman collection is available [here](postman-collection-sample.json).
 - Open ports **5432** (PostgreSQL) and **8080** (API).
 
 ---

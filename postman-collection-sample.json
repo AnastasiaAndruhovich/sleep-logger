@@ -1,0 +1,268 @@
+{
+  "collection": {
+    "info": {
+      "_postman_id": "e512df0f-1170-4704-b82a-5d5bf3ffa6e6",
+      "name": "Sleep Logger API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "updatedAt": "2024-12-03T15:30:42.000Z",
+      "createdAt": "2024-11-28T09:48:44.000Z",
+      "lastUpdatedBy": "9164641",
+      "uid": "9164641-e512df0f-1170-4704-b82a-5d5bf3ffa6e6"
+    },
+    "item": [
+      {
+        "name": "Health check",
+        "id": "612bd763-5cf0-40d0-9592-18ad12ec81c9",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "auth": {
+            "type": "noauth"
+          },
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text",
+              "disabled": true
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/health",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "health"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-612bd763-5cf0-40d0-9592-18ad12ec81c9"
+      },
+      {
+        "name": "Users",
+        "id": "39d15f89-ee65-4402-8da2-f3fcacb31f6c",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "auth": {
+            "type": "noauth"
+          },
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text",
+              "disabled": true
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/users",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "users"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-39d15f89-ee65-4402-8da2-f3fcacb31f6c"
+      },
+      {
+        "name": "User sleep",
+        "id": "642189d1-438a-4284-9a2d-2ee42920a554",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "POST",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text"
+            }
+          ],
+          "body": {
+            "mode": "raw",
+            "raw": "{\r\n    \"createdDate\": \"12/03/2024\",\r\n    \"timeInBedInMinutes\": 280,\r\n    \"fallAsleepTime\": \"10:15 AM\",\r\n    \"wakeUpTime\": \"06:05 PM\",\r\n    \"feeling\": \"BAD\"\r\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/users/1/sleep",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "users",
+              "1",
+              "sleep"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-642189d1-438a-4284-9a2d-2ee42920a554"
+      },
+      {
+        "name": "User by id",
+        "id": "34acc6e6-352f-43e5-9826-0b8c8ce01b39",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/users/1",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "users",
+              "1"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-34acc6e6-352f-43e5-9826-0b8c8ce01b39"
+      },
+      {
+        "name": "User sleep last night",
+        "id": "3eec03a1-c5c6-4d5c-8f42-84a6d6c171fe",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/users/1/sleep/last-night",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "users",
+              "1",
+              "sleep",
+              "last-night"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-3eec03a1-c5c6-4d5c-8f42-84a6d6c171fe"
+      },
+      {
+        "name": "User sleep last month",
+        "id": "be6d3751-00b9-4b05-be87-222f20508226",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/users/1/sleep/last-month",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "users",
+              "1",
+              "sleep",
+              "last-month"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-be6d3751-00b9-4b05-be87-222f20508226"
+      },
+      {
+        "name": "User average sleep for last month",
+        "id": "b78987c7-1ccf-4f1e-836b-a844fb33b4a8",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "GET",
+          "header": [
+            {
+              "key": "Authorization",
+              "value": "MQ==",
+              "type": "text"
+            }
+          ],
+          "url": {
+            "raw": "http://localhost:8080/api/sleep-logger/users/1/sleep/last-month-average",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "8080",
+            "path": [
+              "api",
+              "sleep-logger",
+              "users",
+              "1",
+              "sleep",
+              "last-month-average"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "9164641-b78987c7-1ccf-4f1e-836b-a844fb33b4a8"
+      }
+    ]
+  }
+}
