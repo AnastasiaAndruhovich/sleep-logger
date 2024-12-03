@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class UserDto {
-    private Integer id;
+    private Long id;
 
     @NotEmpty
     @Size(min = 1, max = 40)

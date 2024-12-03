@@ -8,5 +8,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class UserWithEncodedIdDto extends UserDto {
-    private String encodedUserId;
+    private String encodedId;
 }
