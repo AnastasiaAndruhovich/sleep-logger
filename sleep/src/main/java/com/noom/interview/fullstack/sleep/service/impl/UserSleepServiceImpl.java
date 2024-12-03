@@ -14,6 +14,7 @@ import com.noom.interview.fullstack.sleep.service.UserSleepService;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,18 @@ public class UserSleepServiceImpl implements UserSleepService {
         return userSleepRepository.findByUserIdAndCreatedDate(userId, createdDate)
                 .map(userSleepMapper::mapUserSleepToSleepDto)
                 .orElse(null);
+    }
+
+    @Override
+    public List<SleepDto> findLastMonthSleepByUserId(long userId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(MessageKey.ERROR_NOT_FOUND_BY_ID.getName(), new Object[]{userId}));
+
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusMonths(1);
+
+        List<UserSleep> userSleepList = userSleepRepository.findByUserIdAndCreatedDateBetween(userId, Date.valueOf(startDate), Date.valueOf(endDate));
+        return userSleepMapper.mapUserSleepListToSleepDtoList(userSleepList);
     }
 
     @Override

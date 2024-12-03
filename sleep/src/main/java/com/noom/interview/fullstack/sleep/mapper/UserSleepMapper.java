@@ -7,6 +7,7 @@ import com.noom.interview.fullstack.sleep.entity.UserSleep;
 import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.List;
 import java.util.Map;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -30,6 +31,8 @@ public interface UserSleepMapper {
     @Mapping(target = "fallAsleepTime", expression = "java(userSleep.getFallAsleepTime().toLocalTime())")
     @Mapping(target = "wakeUpTime", expression = "java(userSleep.getWakeUpTime().toLocalTime())")
     SleepDto mapUserSleepToSleepDto(UserSleep userSleep);
+
+    List<SleepDto> mapUserSleepListToSleepDtoList(List<UserSleep> userSleepList);
 
     @Mapping(target = "startDate", ignore = true)
     @Mapping(target = "endDate", ignore = true)

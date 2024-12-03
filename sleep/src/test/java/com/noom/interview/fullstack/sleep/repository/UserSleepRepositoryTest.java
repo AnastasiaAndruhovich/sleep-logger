@@ -5,9 +5,12 @@ import com.noom.interview.fullstack.sleep.entity.UserSleep;
 import com.noom.interview.fullstack.sleep.generator.UserGenerator;
 import com.noom.interview.fullstack.sleep.generator.UserSleepGenerator;
 import java.sql.Date;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,15 @@ public class UserSleepRepositoryTest {
 
     @Autowired
     private UserSleepRepository userSleepRepository;
+
+    private static LocalDate currentDate;
+    private static LocalDate oneMonthBeforeDate;
+
+    @BeforeAll
+    static void setUp() {
+        currentDate = LocalDate.now();
+        oneMonthBeforeDate = currentDate.minusMonths(1);
+    }
 
     @Test
     @DisplayName("Should save UserSleep entity and verify all fields are persisted correctly")
@@ -81,6 +93,67 @@ public class UserSleepRepositoryTest {
         Optional<UserSleep> actualUserSleepOpt = userSleepRepository.findByUserIdAndCreatedDate(expectedUserSleep.getUser().getId(), Date.valueOf("3025-11-03"));
 
         assertTrue(actualUserSleepOpt.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Should find user sleep records within the specified date range")
+    void shouldFindUserSleepRecordsWithinDateRange() {
+        User testUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+
+        UserSleep userSleep1 = UserSleepGenerator.generateUserSleepWithoutUser();
+        userSleep1.setUser(testUser);
+        userSleep1.setCreatedDate(Date.valueOf(currentDate.minusDays(3)));
+
+        UserSleep userSleep2 = UserSleepGenerator.generateUserSleepWithoutUser();
+        userSleep2.setUser(testUser);
+        userSleep2.setCreatedDate(Date.valueOf(currentDate.minusDays(5)));
+
+        userSleepRepository.save(userSleep1);
+        userSleepRepository.save(userSleep2);
+
+        List<UserSleep> actualUserSleepList = userSleepRepository.findByUserIdAndCreatedDateBetween(testUser.getId(), Date.valueOf(oneMonthBeforeDate), Date.valueOf(currentDate));
+
+        assertNotNull(actualUserSleepList);
+        assertEquals(2, actualUserSleepList.size());
+        assertEquals(userSleep1.getId(), actualUserSleepList.get(0).getId());
+        assertEquals(userSleep2.getId(), actualUserSleepList.get(1).getId());
+    }
+
+    @Test
+    @DisplayName("Should return an empty list when no user sleep records are found within the date range")
+    void shouldFindUserSleepRecordsWithinDateRange_whenNoRecordsFound_returnEmptyList() {
+        Date startDateSql = Date.valueOf(currentDate.plusDays(1));
+        Date endDateSql = Date.valueOf(currentDate.plusMonths(1));
+
+        User testUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+
+        UserSleep userSleep1 = UserSleepGenerator.generateUserSleepWithoutUser();
+        userSleep1.setUser(testUser);
+        userSleep1.setCreatedDate(Date.valueOf(currentDate.minusDays(3)));
+
+        UserSleep userSleep2 = UserSleepGenerator.generateUserSleepWithoutUser();
+        userSleep2.setUser(testUser);
+        userSleep2.setCreatedDate(Date.valueOf(currentDate.minusDays(5)));
+
+        userSleepRepository.save(userSleep1);
+        userSleepRepository.save(userSleep2);
+
+        List<UserSleep> actualUserSleepList = userSleepRepository.findByUserIdAndCreatedDateBetween(testUser.getId(), startDateSql, endDateSql);
+
+        assertNotNull(actualUserSleepList);
+        assertTrue(actualUserSleepList.isEmpty());
+    }
+
+    @Test
+    @DisplayName("should return an empty list when no user sleep records are found for the given user")
+    void shouldReturnEmptyListWhenNoRecordsFoundForUser() {
+        long userId = -1L;
+        userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+
+        List<UserSleep> result = userSleepRepository.findByUserIdAndCreatedDateBetween(userId, Date.valueOf(oneMonthBeforeDate), Date.valueOf(currentDate));
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
     /*@ParameterizedTest
