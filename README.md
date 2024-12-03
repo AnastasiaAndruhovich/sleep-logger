@@ -96,6 +96,9 @@ Link to the designed DB schema is https://drawsql.app/teams/nastya-andr/diagrams
 - ORM: Spring Data JPA - Hibernate
 - Testing: JUnit 5
 
+### Development process tracking
+It can be tracked within github project https://github.com/users/AnastasiaAndruhovich/projects/3
+
 ---
 
 ## Future Enhancements
