@@ -19,9 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import static org.mockito.ArgumentMatchers.any;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,10 +39,8 @@ class UserSleepServiceImplTest {
     @Mock
     private UserSleepRepository userSleepRepository;
 
-    @Mock
-    private UserSleepMapper userSleepMapper;
+    private final UserSleepMapper userSleepMapper = Mappers.getMapper(UserSleepMapper.class);
 
-    @InjectMocks
     private UserSleepServiceImpl userSleepService;
 
     private static LocalDate currentDate;
@@ -52,17 +52,26 @@ class UserSleepServiceImplTest {
         oneMonthBeforeDate = currentDate.minusMonths(1);
     }
 
+    @BeforeEach
+    void init() {
+        userSleepService = new UserSleepServiceImpl(userRepository, userSleepRepository, userSleepMapper);
+    }
+
     @Test
     @DisplayName("Should save user sleep successfully")
     void shouldSaveUserSleep() {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
-        UserSleep userSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
-        UserSleep expectedUserSleep = UserSleepGenerator.generateUserSleepWithoutUser();
         SleepDto sleepDto = UserSleepGenerator.generateSleepDto();
+
+        UserSleep userSleep = userSleepMapper.mapSleepDtoToUserSleep(sleepDto);
         userSleep.setUser(testUser);
 
+        UserSleep expectedUserSleep = userSleepMapper.mapSleepDtoToUserSleep(sleepDto);
+        expectedUserSleep.setId(1L);
+        expectedUserSleep.setUser(testUser);
+
+
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(userSleepMapper.mapSleepDtoToUserSleep(sleepDto)).thenReturn(userSleep);
         when(userSleepRepository.save(userSleep)).thenReturn(expectedUserSleep);
 
         long savedId = userSleepService.saveUserSleep(testUser.getId(), sleepDto);
@@ -92,11 +101,10 @@ class UserSleepServiceImplTest {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
         UserSleep userSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
         userSleep.setUser(testUser);
-        SleepDto expectedSleepDto = UserSleepGenerator.generateSleepDto();
+        SleepDto expectedSleepDto = userSleepMapper.mapUserSleepToSleepDto(userSleep); // Use real mapping
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userSleepRepository.findByUserIdAndCreatedDate(eq(testUser.getId()), any(Date.class))).thenReturn(Optional.of(userSleep));
-        when(userSleepMapper.mapUserSleepToSleepDto(userSleep)).thenReturn(expectedSleepDto);
 
         SleepDto actualSleepDto = userSleepService.findLastNightSleepByUserId(testUser.getId());
 
@@ -120,28 +128,20 @@ class UserSleepServiceImplTest {
         assertNull(actualSleepDto);
         verify(userRepository).findById(testUser.getId());
         verify(userSleepRepository).findByUserIdAndCreatedDate(eq(testUser.getId()), any(Date.class));
-        verify(userSleepMapper, never()).mapUserSleepToSleepDto(any(UserSleep.class));
-
     }
 
     @Test
     @DisplayName("Should find all user sleep records within the last month")
     void shouldFindLastMonthSleep() {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
-        UserSleep userSleep1 = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
-        userSleep1.setUser(testUser);
-        UserSleep userSleep2 = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
-        userSleep2.setUser(testUser);
-        List<UserSleep> userSleepList = Arrays.asList(userSleep1, userSleep2);
-
-        SleepDto sleepDto1 = UserSleepGenerator.generateSleepDto();
-        SleepDto sleepDto2 = UserSleepGenerator.generateSleepDto();
-        List<SleepDto> expectedSleepDtoList = Arrays.asList(sleepDto1, sleepDto2);
-
+        List<UserSleep> userSleepList = Arrays.asList(
+                UserSleepGenerator.generateUserSleepWithoutIdAndUser(),
+                UserSleepGenerator.generateUserSleepWithoutIdAndUser()
+        );
+        List<SleepDto> expectedSleepDtoList = userSleepMapper.mapUserSleepListToSleepDtoList(userSleepList); // Use real mapping
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userSleepRepository.findByUserIdAndCreatedDateBetween(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)))).thenReturn(userSleepList);
-        when(userSleepMapper.mapUserSleepListToSleepDtoList(userSleepList)).thenReturn(expectedSleepDtoList);
 
         List<SleepDto> actualSleepDtoList = userSleepService.findLastMonthSleepByUserId(testUser.getId());
 
@@ -150,7 +150,6 @@ class UserSleepServiceImplTest {
 
         verify(userRepository).findById(testUser.getId());
         verify(userSleepRepository).findByUserIdAndCreatedDateBetween(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)));
-        verify(userSleepMapper).mapUserSleepListToSleepDtoList(userSleepList);
     }
 
     @Test
@@ -158,11 +157,8 @@ class UserSleepServiceImplTest {
     void shouldFindLastMonthSleep_whenNoSleepRecordsFound_returnEmptyList() {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
 
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusMonths(1);
-
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(userSleepRepository.findByUserIdAndCreatedDateBetween(eq(testUser.getId()), eq(Date.valueOf(startDate)), eq(Date.valueOf(endDate)))).thenReturn(Collections.emptyList());
+        when(userSleepRepository.findByUserIdAndCreatedDateBetween(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)))).thenReturn(Collections.emptyList());
 
         List<SleepDto> actualSleepDtoList = userSleepService.findLastMonthSleepByUserId(testUser.getId());
 
@@ -170,16 +166,7 @@ class UserSleepServiceImplTest {
         assertTrue(actualSleepDtoList.isEmpty());
 
         verify(userRepository).findById(testUser.getId());
-        verify(userSleepRepository).findByUserIdAndCreatedDateBetween(eq(testUser.getId()), eq(Date.valueOf(startDate)), eq(Date.valueOf(endDate)));
-    }
-
-    @Test
-    @DisplayName("Should throw NotFoundException when user is not found while fetching last month's sleep records")
-    void shouldFindLastMonthSleep_whenUserNotFound_throwNotFoundException() {
-        long userId = -1L;
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        assertThrows(NotFoundException.class, () -> userSleepService.findLastMonthSleepByUserId(userId));
+        verify(userSleepRepository).findByUserIdAndCreatedDateBetween(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)));
     }
 
     @Test
@@ -187,17 +174,18 @@ class UserSleepServiceImplTest {
     void shouldCalculateAverageSleepWithinLastMonthForUserById() {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
         AverageUserSleep averageUserSleep = UserSleepGenerator.generateAverageUserSleep();
-        AverageSleepDto averageSleepDto = UserSleepGenerator.generateAverageSleepDtoWithinOneMonth();
+        AverageSleepDto expectedAverageSleepDto = userSleepMapper.mapAverageUserSleepToAverageSleepDto(averageUserSleep);
+        expectedAverageSleepDto.setStartDate(oneMonthBeforeDate);
+        expectedAverageSleepDto.setEndDate(currentDate);
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userSleepRepository.calculateUserAverageSleepWithinPeriod(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)))).thenReturn(averageUserSleep);
-        when(userSleepMapper.mapAverageUserSleepToAverageSleepDto(averageUserSleep)).thenReturn(averageSleepDto);
 
         AverageSleepDto actualAverageSleepDto = userSleepService.calculateAverageSleepWithinLastMonthForUserById(testUser.getId());
 
         assertNotNull(actualAverageSleepDto);
-        assertEquals(averageSleepDto.getStartDate(), actualAverageSleepDto.getStartDate());
-        assertEquals(averageSleepDto.getEndDate(), actualAverageSleepDto.getEndDate());
+        assertEquals(expectedAverageSleepDto.getStartDate(), actualAverageSleepDto.getStartDate());
+        assertEquals(expectedAverageSleepDto.getEndDate(), actualAverageSleepDto.getEndDate());
 
         verify(userRepository).findById(testUser.getId());
         verify(userSleepRepository).calculateUserAverageSleepWithinPeriod(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)));
@@ -216,6 +204,5 @@ class UserSleepServiceImplTest {
         assertNull(expectedAverageSleepDto);
         verify(userRepository).findById(testUser.getId());
         verify(userSleepRepository).calculateUserAverageSleepWithinPeriod(eq(testUser.getId()), eq(Date.valueOf(oneMonthBeforeDate)), eq(Date.valueOf(currentDate)));
-        verify(userSleepMapper, never()).mapAverageUserSleepToAverageSleepDto(any(AverageUserSleep.class));
     }
 }

@@ -22,7 +22,7 @@ public interface UserMapper {
     List<UserWithEncodedIdDto> mapUserListToUserWithEncodedIdDtoList(List<User> users);
 
     @Named("encodeId")
-    default String encodeId(Integer userId) {
+    default String encodeId(Long userId) {
         return userId == null ? null : Base64.getEncoder().encodeToString(String.valueOf(userId).getBytes(StandardCharsets.UTF_8));
     }
 

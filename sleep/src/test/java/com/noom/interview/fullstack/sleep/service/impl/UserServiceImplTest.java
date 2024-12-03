@@ -11,8 +11,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
@@ -24,21 +26,22 @@ class UserServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private UserMapper userMapper;
+    private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
 
-    @InjectMocks
     private UserServiceImpl userService;
+
+    @BeforeEach
+    void setUp() {
+        userService = new UserServiceImpl(userRepository, userMapper);
+    }
 
     @Test
     void shouldFindAllUsersWithEncodedIds() {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
-        UserWithEncodedIdDto testUserWithEncodedIdDto = UserGenerator.generateUserWithEncodedIdDto(testUser.getId());
         List<User> userList = Collections.singletonList(testUser);
-        List<UserWithEncodedIdDto> expectedDtoList = Collections.singletonList(testUserWithEncodedIdDto);
+        List<UserWithEncodedIdDto> expectedDtoList = userMapper.mapUserListToUserWithEncodedIdDtoList(userList);
 
         when(userRepository.findAll()).thenReturn(userList);
-        when(userMapper.mapUserListToUserWithEncodedIdDtoList(userList)).thenReturn(expectedDtoList);
 
         List<UserWithEncodedIdDto> actualDtoList = userService.findAllUsersWithEncodedIds();
 
@@ -47,17 +50,14 @@ class UserServiceImplTest {
         assertEquals(expectedDtoList.get(0).getEncodedId(), actualDtoList.get(0).getEncodedId());
 
         verify(userRepository, times(1)).findAll();
-        verify(userMapper, times(1)).mapUserListToUserWithEncodedIdDtoList(userList);
     }
 
     @Test
     void shouldFindUserById_whenUserExists() {
         User testUser = UserGenerator.generateUserWithoutUserSleep();
-        UserDto expectedDto = UserGenerator.generateUserDto(testUser.getId());
-
+        UserDto expectedDto = userMapper.mapUserToUserDto(testUser);
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
-        when(userMapper.mapUserToUserDto(testUser)).thenReturn(expectedDto);
 
         UserDto result = userService.findUserById(testUser.getId());
 
@@ -67,7 +67,6 @@ class UserServiceImplTest {
         assertEquals(expectedDto.getEmail(), result.getEmail());
 
         verify(userRepository, times(1)).findById(testUser.getId());
-        verify(userMapper, times(1)).mapUserToUserDto(testUser);
     }
 
     @Test
@@ -79,6 +78,5 @@ class UserServiceImplTest {
         assertThrows(NotFoundException.class, () -> userService.findUserById(userId));
 
         verify(userRepository, times(1)).findById(userId);
-        verifyNoInteractions(userMapper);
     }
 }
