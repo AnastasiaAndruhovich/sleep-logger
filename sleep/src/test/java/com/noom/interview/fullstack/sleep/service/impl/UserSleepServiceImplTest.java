@@ -4,6 +4,7 @@ import com.noom.interview.fullstack.sleep.dto.AverageSleepDto;
 import com.noom.interview.fullstack.sleep.dto.SleepDto;
 import com.noom.interview.fullstack.sleep.entity.User;
 import com.noom.interview.fullstack.sleep.entity.UserSleep;
+import com.noom.interview.fullstack.sleep.exception.ConflictRequestException;
 import com.noom.interview.fullstack.sleep.exception.NotFoundException;
 import com.noom.interview.fullstack.sleep.generator.UserGenerator;
 import com.noom.interview.fullstack.sleep.generator.UserSleepGenerator;
@@ -25,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -79,6 +79,25 @@ class UserSleepServiceImplTest {
         assertEquals(expectedUserSleep.getId(), savedId);
         verify(userRepository).findById(testUser.getId());
         verify(userSleepRepository).save(userSleep);
+    }
+
+    @Test
+    @DisplayName("Should throw ConflictRequestException when user sleep already exists")
+    void shouldSaveUserSleep_whenUserSleepExists_throwConflictRequestException() {
+        User testUser = UserGenerator.generateUserWithoutUserSleep();
+        Date createdDate = Date.valueOf(LocalDate.now());
+        SleepDto sleepDto = UserSleepGenerator.generateSleepDto();
+        sleepDto.setCreatedDate(LocalDate.now());
+
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+        UserSleep existingUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
+        existingUserSleep.setCreatedDate(createdDate);
+        when(userSleepRepository.findByUserIdAndCreatedDate(testUser.getId(), createdDate))
+                .thenReturn(Optional.of(existingUserSleep));
+
+        assertThrows(ConflictRequestException.class, () -> userSleepService.saveUserSleep(testUser.getId(), sleepDto));
+        verify(userSleepRepository, never()).save(any(UserSleep.class));
     }
 
     @Test

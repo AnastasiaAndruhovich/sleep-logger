@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
@@ -53,6 +54,24 @@ public class UserSleepRepositoryTest {
         assertEquals(sampledUserSleep.getWakeUpTime(), actualUserSleep.getWakeUpTime());
         assertEquals(sampledUserSleep.getSleepingTimeInMinutes(), actualUserSleep.getSleepingTimeInMinutes());
         assertEquals(sampledUserSleep.getFeeling(), actualUserSleep.getFeeling());
+    }
+
+    @Test
+    @DisplayName("Should throw DataIntegrityViolationException when saving duplicate user_id and created_date")
+    void shouldSave_whenDuplicateUserIdAndCreatedDate_throwDataIntegrityViolationException() {
+        User testUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
+        userRepository.save(testUser);
+
+        UserSleep firstUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
+        firstUserSleep.setUser(testUser);
+        firstUserSleep.setCreatedDate(Date.valueOf(LocalDate.now().minusYears(1)));
+        userSleepRepository.save(firstUserSleep);
+
+        UserSleep duplicateUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
+        duplicateUserSleep.setUser(testUser);
+        duplicateUserSleep.setCreatedDate(firstUserSleep.getCreatedDate());
+
+        assertThrows(DataIntegrityViolationException.class, () -> userSleepRepository.save(duplicateUserSleep));
     }
 
     @Test
@@ -153,19 +172,5 @@ public class UserSleepRepositoryTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
-
-    /*@ParameterizedTest
-    @MethodSource("provideArgumentsForUserAverageSleep")
-    @DisplayName("")
-    void shouldCalculateUserAverageSleepWithinPeriod(long userId, Date startDate, Date endDate, AverageUserSleep expectedAverageUSerSleep) {
-        *//*AverageUserSleep actualAverageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, startDate, endDate);
-
-        assertEquals(expectedAverageUSerSleep, actualAverageUserSleep);*//*
-    }
-
-    private static Stream<Arguments> provideArgumentsForUserAverageSleep() {
-        return Stream.of(Arguments.of((long) 1, Date.valueOf("2024-11-01"), Date.valueOf("2024-11-30"),
-                AverageUserSleep.builder().avgSleepingTimeInMinutes(363).avgFallAsleepTime(Time.valueOf("22:13:45")).avgWakeTimeTime(Time.valueOf("06:20:00")).goodCount(2).okCount(0).badCount(2).build()));
-    }*/
 
 }

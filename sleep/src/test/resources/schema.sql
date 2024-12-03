@@ -17,7 +17,10 @@ CREATE TABLE user_sleep
     user_id                  INTEGER NOT NULL
         REFERENCES users
             ON DELETE CASCADE,
-    sleeping_time_in_minutes INTEGER NOT NULL,
-    created_date             DATE    NOT NULL
+    sleeping_time_in_minutes INTEGER NOT NULL
+        CONSTRAINT check_positive
+            CHECK (sleeping_time_in_minutes >= 0),
+    created_date             DATE    NOT NULL,
+    CONSTRAINT user_sleep_user_id_created_date_unique_idx
+        UNIQUE (user_id, created_date)
 );
-CREATE INDEX user_sleep_created_date_idx ON user_sleep (user_id, created_date);
