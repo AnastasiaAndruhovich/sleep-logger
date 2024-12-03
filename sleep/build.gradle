@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.7.17'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
     id 'java'
+    id 'jacoco'
 }
 
 group = 'com.noom.interview.fullstack'
@@ -46,4 +47,49 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
     jvmArgs '-Duser.timezone=UTC'
     useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = '0.8.8'
+}
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = false
+        html.required = true
+        csv.required = false
+    }
+
+    classDirectories.setFrom(files(classDirectories.files.collect {
+        fileTree(dir: it, exclude: [
+                'com/noom/interview/fullstack/sleep/controller/**',
+                'com/noom/interview/fullstack/sleep/config/**',
+                'com/noom/interview/fullstack/sleep/constant/**',
+                'com/noom/interview/fullstack/sleep/exception/**',
+                'com/noom/interview/fullstack/sleep/entity/**',
+                'com/noom/interview/fullstack/sleep/dto/**',
+                'com/noom/interview/fullstack/sleep/model/**',
+                'com/noom/interview/fullstack/sleep/security/**',
+                'com/noom/interview/fullstack/sleep/SleepApplication.class'
+        ])
+    }))
+}
+
+test {
+    useJUnitPlatform()
+
+    finalizedBy jacocoTestReport
+}
+
+check.dependsOn jacocoTestReport
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.50
+            }
+        }
+    }
 }
