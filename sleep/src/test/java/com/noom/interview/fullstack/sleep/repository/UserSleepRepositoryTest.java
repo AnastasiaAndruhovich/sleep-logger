@@ -3,18 +3,13 @@ package com.noom.interview.fullstack.sleep.repository;
 import com.noom.interview.fullstack.sleep.entity.User;
 import com.noom.interview.fullstack.sleep.entity.UserSleep;
 import com.noom.interview.fullstack.sleep.generator.UserGenerator;
-import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
+import com.noom.interview.fullstack.sleep.generator.UserSleepGenerator;
 import java.sql.Date;
-import java.sql.Time;
 import java.util.Optional;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -34,7 +29,7 @@ public class UserSleepRepositoryTest {
     @DisplayName("Should save UserSleep entity and verify all fields are persisted correctly")
     void shouldSave() {
         User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
-        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
+        UserSleep sampledUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
 
         UserSleep actualUserSleep = userSleepRepository.save(sampledUserSleep);
@@ -52,7 +47,7 @@ public class UserSleepRepositoryTest {
     @DisplayName("Should find UserSleep entity by userId and createdDate")
     void shouldFindByUserIdAndCreatedDate() {
         User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
-        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
+        UserSleep sampledUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
         UserSleep expectedUserSleep = userSleepRepository.save(sampledUserSleep);
 
@@ -66,11 +61,11 @@ public class UserSleepRepositoryTest {
     @DisplayName("Should return empty when no UserSleep is found for userId")
     void shouldFindByUserIdAndCreatedDate_whenNotFoundByUserId_returnsEmptyObject() {
         User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
-        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
+        UserSleep sampledUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
         UserSleep expectedUserSleep = userSleepRepository.save(sampledUserSleep);
 
-        Optional<UserSleep> actualUserSleepOpt = userSleepRepository.findByUserIdAndCreatedDate((long) 4, expectedUserSleep.getCreatedDate());
+        Optional<UserSleep> actualUserSleepOpt = userSleepRepository.findByUserIdAndCreatedDate(-1L, expectedUserSleep.getCreatedDate());
 
         assertTrue(actualUserSleepOpt.isEmpty());
     }
@@ -79,7 +74,7 @@ public class UserSleepRepositoryTest {
     @DisplayName("Should return empty when no UserSleep is found for createdDate")
     void shouldFindByUserIdAndCreatedDate_whenNotFoundByUserCreatedDate_returnsEmptyObject() {
         User expectedUser = userRepository.save(UserGenerator.generateUserWithoutIdAndUserSleep());
-        UserSleep sampledUserSleep = UserGenerator.generateUserSleepWithoutIdAndUser();
+        UserSleep sampledUserSleep = UserSleepGenerator.generateUserSleepWithoutIdAndUser();
         sampledUserSleep.setUser(expectedUser);
         UserSleep expectedUserSleep = userSleepRepository.save(sampledUserSleep);
 
@@ -88,18 +83,18 @@ public class UserSleepRepositoryTest {
         assertTrue(actualUserSleepOpt.isEmpty());
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @MethodSource("provideArgumentsForUserAverageSleep")
     @DisplayName("")
     void shouldCalculateUserAverageSleepWithinPeriod(long userId, Date startDate, Date endDate, AverageUserSleep expectedAverageUSerSleep) {
-        /*AverageUserSleep actualAverageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, startDate, endDate);
+        *//*AverageUserSleep actualAverageUserSleep = userSleepRepository.calculateUserAverageSleepWithinPeriod(userId, startDate, endDate);
 
-        assertEquals(expectedAverageUSerSleep, actualAverageUserSleep);*/
+        assertEquals(expectedAverageUSerSleep, actualAverageUserSleep);*//*
     }
 
     private static Stream<Arguments> provideArgumentsForUserAverageSleep() {
         return Stream.of(Arguments.of((long) 1, Date.valueOf("2024-11-01"), Date.valueOf("2024-11-30"),
                 AverageUserSleep.builder().avgSleepingTimeInMinutes(363).avgFallAsleepTime(Time.valueOf("22:13:45")).avgWakeTimeTime(Time.valueOf("06:20:00")).goodCount(2).okCount(0).badCount(2).build()));
-    }
+    }*/
 
 }

@@ -21,25 +21,24 @@ import lombok.*;
                 @ConstructorResult(
                         targetClass = AverageUserSleep.class,
                         columns = {
-                                @ColumnResult(name = "date"),
-                                @ColumnResult(name = "avg_sleeping_time_in_minutes"),
-                                @ColumnResult(name = "avg_fall_asleep_time"),
-                                @ColumnResult(name = "avg_wake_time"),
-                                @ColumnResult(name = "good_count"),
-                                @ColumnResult(name = "ok_count"),
-                                @ColumnResult(name = "bad_count")
+                                @ColumnResult(name = "avg_sleeping_time_in_minutes", type = Integer.class),
+                                @ColumnResult(name = "avg_fall_asleep_time", type = java.util.Date.class),
+                                @ColumnResult(name = "avg_wake_time", type = java.util.Date.class),
+                                @ColumnResult(name = "good_count", type = Integer.class),
+                                @ColumnResult(name = "ok_count", type = Integer.class),
+                                @ColumnResult(name = "bad_count", type = Integer.class)
                         }
                 )
         }
 )
 @NamedNativeQuery(
         name = "UserSleep.calculateUserAverageSleepWithinPeriod",
-        query = "SELECT AVG(sleeping_time_in_minutes)                AS avg_sleeping_time_in_minutes,\n" +
-                "       AVG(fall_asleep_time)::time                  AS avg_fall_asleep_time,\n" +
-                "       AVG(wake_up_time)::time                      AS avg_wake_time,\n" +
-                "       COUNT(CASE WHEN feeling = 'GOOD' THEN 1 END) AS good_count,\n" +
-                "       COUNT(CASE WHEN feeling = 'OK' THEN 1 END)   AS ok_count,\n" +
-                "       COUNT(CASE WHEN feeling = 'BAD' THEN 1 END)  AS bad_count\n" +
+        query = "SELECT CAST(AVG(sleeping_time_in_minutes) as integer) AS avg_sleeping_time_in_minutes,\n" +
+                "       AVG(fall_asleep_time)                          AS avg_fall_asleep_time,\n" +
+                "       AVG(wake_up_time)                              AS avg_wake_time,\n" +
+                "       COUNT(CASE WHEN feeling = 'GOOD' THEN 1 END)   AS good_count,\n" +
+                "       COUNT(CASE WHEN feeling = 'OK' THEN 1 END)     AS ok_count,\n" +
+                "       COUNT(CASE WHEN feeling = 'BAD' THEN 1 END)    AS bad_count\n" +
                 "FROM user_sleep\n" +
                 "WHERE user_id = :userId\n" +
                 "  AND created_date BETWEEN :startDate AND :endDate",
