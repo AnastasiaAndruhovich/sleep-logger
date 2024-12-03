@@ -66,8 +66,6 @@ Ensure the following are installed on your system:
 
 Link to the designed DB schema is https://drawsql.app/teams/nastya-andr/diagrams/sleep.
 
-![img.png](img.png)
-
 
 ## Testing
 
