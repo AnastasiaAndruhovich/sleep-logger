@@ -2,11 +2,14 @@ package com.noom.interview.fullstack.sleep.entity;
 
 import com.noom.interview.fullstack.sleep.constant.Feeling;
 import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
+import io.hypersistence.utils.hibernate.type.basic.PostgreSQLEnumType;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Objects;
 import javax.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 @Entity
 @Getter
@@ -15,6 +18,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "user_sleep")
+@TypeDef(
+        name = "pgsql_enum",
+        typeClass = PostgreSQLEnumType.class
+)
 @SqlResultSetMapping(
         name = "averageUserSleepMapping",
         classes = {
@@ -62,6 +69,8 @@ public class UserSleep {
     @Column(name = "sleeping_time_in_minutes", nullable = false)
     private int sleepingTimeInMinutes;
 
+    @Column(name = "feeling")
+    @Type(type = "pgsql_enum")
     @Enumerated(EnumType.STRING)
     private Feeling feeling;
 
