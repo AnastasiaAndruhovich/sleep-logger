@@ -25,6 +25,7 @@ dependencies {
     implementation 'org.instancio:instancio-core:5.1.0'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.14'
     implementation 'org.springdoc:springdoc-openapi-security:1.6.14'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
 
     runtimeOnly 'org.postgresql:postgresql'
 
@@ -90,7 +91,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.50
+                minimum = 0.80
             }
         }
     }
