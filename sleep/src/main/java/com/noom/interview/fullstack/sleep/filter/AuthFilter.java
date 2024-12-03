@@ -1,6 +1,7 @@
 package com.noom.interview.fullstack.sleep.filter;
 
 import com.noom.interview.fullstack.sleep.config.SecurityConfiguration;
+import com.noom.interview.fullstack.sleep.repository.UserRepository;
 import com.noom.interview.fullstack.sleep.security.CustomAuthenticationToken;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -10,6 +11,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -21,9 +23,12 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
+@RequiredArgsConstructor
 public class AuthFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthFilter.class);
+
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException, ServletException {
@@ -31,12 +36,18 @@ public class AuthFilter extends OncePerRequestFilter {
 
         if (authHeader != null && !authHeader.isBlank()) {
             try {
-                int userId = Integer.parseInt(new String(Base64.getDecoder().decode(authHeader), StandardCharsets.UTF_8));
-                LOGGER.info("User id {} invokes method {} {}", userId, request.getMethod(), request.getRequestURI());
+                long userId = Long.parseLong(new String(Base64.getDecoder().decode(authHeader), StandardCharsets.UTF_8));
+                if (userRepository.findById(userId).isEmpty()) {
+                    LOGGER.error("Unauthorized user. User is not found by id {}", userId);
+                    response.sendError(HttpStatus.UNAUTHORIZED.value(), "User is not found");
+                } else {
+                    LOGGER.info("User id {} invokes method {} {}", userId, request.getMethod(), request.getRequestURI());
 
-                SecurityContext securityContext = SecurityContextHolder.getContext();
-                securityContext.setAuthentication(new CustomAuthenticationToken(null));
-                filterChain.doFilter(request, response);
+                    SecurityContext securityContext = SecurityContextHolder.getContext();
+                    securityContext.setAuthentication(new CustomAuthenticationToken(null));
+                    filterChain.doFilter(request, response);
+                }
+
 
             } catch (NumberFormatException e) {
                 LOGGER.error("Unauthorized user. Authorization header is not numeric");
