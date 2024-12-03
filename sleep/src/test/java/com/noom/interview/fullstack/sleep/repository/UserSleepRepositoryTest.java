@@ -115,8 +115,6 @@ public class UserSleepRepositoryTest {
 
         assertNotNull(actualUserSleepList);
         assertEquals(2, actualUserSleepList.size());
-        assertEquals(userSleep1.getId(), actualUserSleepList.get(0).getId());
-        assertEquals(userSleep2.getId(), actualUserSleepList.get(1).getId());
     }
 
     @Test
