@@ -4,6 +4,7 @@ import com.noom.interview.fullstack.sleep.dto.UserDto;
 import com.noom.interview.fullstack.sleep.dto.UserWithEncodedIdDto;
 import com.noom.interview.fullstack.sleep.service.UserService;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserDto findUserById(@NotNull @PathVariable("userId") Integer userId) {
+    public UserDto findUserById(@Valid @NotNull @PathVariable("userId") Integer userId) {
         return userService.findUserById(userId);
     }
 

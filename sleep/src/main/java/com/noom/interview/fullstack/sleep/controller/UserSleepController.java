@@ -4,6 +4,7 @@ import com.noom.interview.fullstack.sleep.dto.AverageSleepDto;
 import com.noom.interview.fullstack.sleep.dto.SleepDto;
 import com.noom.interview.fullstack.sleep.service.UserSleepService;
 import java.util.List;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,13 +17,13 @@ public class UserSleepController {
     private final UserSleepService userSleepService;
 
     @PostMapping
-    public long saveUserSleep(@NotNull @PathVariable("userId") Integer userId,
-                              @NotNull @RequestBody SleepDto sleepDto) {
+    public long saveUserSleep(@Valid @NotNull @PathVariable("userId") Integer userId,
+                              @Valid @NotNull @RequestBody SleepDto sleepDto) {
         return userSleepService.saveUserSleep(userId, sleepDto);
     }
 
     @GetMapping("/last-night")
-    public SleepDto findLastNightSleepByUserId(@NotNull @PathVariable("userId") Integer userId) {
+    public SleepDto findLastNightSleepByUserId(@Valid @NotNull @PathVariable("userId") Integer userId) {
         return userSleepService.findLastNightSleepByUserId(userId);
     }
 
