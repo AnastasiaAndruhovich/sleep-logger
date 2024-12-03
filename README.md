@@ -106,3 +106,4 @@ It can be tracked within github project https://github.com/users/AnastasiaAndruh
 - Migrate from H2 to Postgres in integration tests in order to have an opportunity to test Postgres dialect specific queries
 - Cache last night results
 - Add authentication and user roles
+- Introduce timezones on DB level and store user timezone for each log
