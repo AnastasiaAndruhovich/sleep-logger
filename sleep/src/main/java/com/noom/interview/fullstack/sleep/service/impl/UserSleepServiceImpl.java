@@ -5,6 +5,7 @@ import com.noom.interview.fullstack.sleep.dto.AverageSleepDto;
 import com.noom.interview.fullstack.sleep.dto.SleepDto;
 import com.noom.interview.fullstack.sleep.entity.User;
 import com.noom.interview.fullstack.sleep.entity.UserSleep;
+import com.noom.interview.fullstack.sleep.exception.ConflictRequestException;
 import com.noom.interview.fullstack.sleep.exception.NotFoundException;
 import com.noom.interview.fullstack.sleep.mapper.UserSleepMapper;
 import com.noom.interview.fullstack.sleep.model.AverageUserSleep;
@@ -16,6 +17,8 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -32,7 +35,13 @@ public class UserSleepServiceImpl implements UserSleepService {
     public long saveUserSleep(long userId, SleepDto sleepDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(MessageKey.ERROR_NOT_FOUND_BY_ID.getName(), new Object[]{userId}));
+
         UserSleep userSleep = userSleepMapper.mapSleepDtoToUserSleep(sleepDto);
+
+        if (userSleepRepository.findByUserIdAndCreatedDate(userId, userSleep.getCreatedDate()).isPresent()) {
+            throw new ConflictRequestException(MessageKey.ERROR_CONFLICT_USER_SLEEP.getName(), new Object[]{user.getEmail(), sleepDto.getCreatedDate().toString()});
+        }
+
         userSleep.setUser(user);
 
         return userSleepRepository.save(userSleep).getId();

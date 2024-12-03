@@ -2,6 +2,7 @@ package com.noom.interview.fullstack.sleep.exception.handler;
 
 
 import com.noom.interview.fullstack.sleep.exception.BadRequestException;
+import com.noom.interview.fullstack.sleep.exception.ConflictRequestException;
 import com.noom.interview.fullstack.sleep.exception.NotFoundException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +58,16 @@ public class CustomExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(NotFoundException e) {
         String customizedMessage = exceptionLogger.getMessageByParams(e.getMessage(), e.getArgs());
-        LOGGER.error("Exception resource not found: {}", customizedMessage);
+        LOGGER.error("Resource not found exception : {}", customizedMessage);
+        return customizedMessage;
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictRequestException.class)
+    public String handleNotFoundException(ConflictRequestException e) {
+        String customizedMessage = exceptionLogger.getMessageByParams(e.getMessage(), e.getArgs());
+        LOGGER.error("Conflict exception: {}", customizedMessage);
         return customizedMessage;
     }
 
