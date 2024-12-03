@@ -18,7 +18,7 @@ public class SleepDto {
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "MM/dd/yyyy")
     @Schema(description = "The date when the user recorded their sleep in MM/dd/yyyy format.", example = "12/01/2024")
     private LocalDate createdDate;
 
@@ -28,13 +28,13 @@ public class SleepDto {
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "hh:mm a")
     @Schema(description = "The time the user fell asleep in hh:mm a format.", example = "11:30 PM")
     private LocalTime fallAsleepTime;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "hh:mm a")
     @Schema(description = "The time the user woke up in hh:mm a format.", example = "6:30 AM")
     private LocalTime wakeUpTime;
 

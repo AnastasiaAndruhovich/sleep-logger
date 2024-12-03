@@ -19,13 +19,13 @@ public class AverageSleepDto {
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "MM/dd/yyyy")
     @Schema(description = "The start date of the sleep period in MM/dd/yyyy format.", example = "12/01/2024")
     private LocalDate startDate;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM/dd/yyyy")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE, pattern = "MM/dd/yyyy")
     @Schema(description = "The end date of the sleep period in MM/dd/yyyy format.", example = "12/02/2024")
     private LocalDate endDate;
 
@@ -35,13 +35,13 @@ public class AverageSleepDto {
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "hh:mm a")
     @Schema(description = "The average time the user falls asleep in hh:mm a format.", example = "10:30 PM")
     private LocalTime avgFallAsleepTime;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "hh:mm a")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
+    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME, pattern = "hh:mm a")
     @Schema(description = "The average time the user wakes up in hh:mm a format.", example = "6:30 AM")
     private LocalTime avgWakeUpTime;
 
